@@ -62,6 +62,7 @@ var propImgHeight    = document.getElementById('prop-img-height');
 var propAspectLock   = document.getElementById('prop-aspect-lock');
 var propOpacity      = document.getElementById('prop-opacity');
 var propOpacityVal   = document.getElementById('prop-opacity-val');
+var propInheritStyle = document.getElementById('prop-inherit-style');
 
 // ============================================================
 // フォント選択
@@ -348,9 +349,9 @@ propFontFamily.addEventListener('change', function () {
   var ann = currentSelection.annotation;
   ann.fontFamily = propFontFamily.value;
   currentSelection.element.style.fontFamily = '"' + ann.fontFamily + '"';
-  // ヘッダーのセレクトも同期
   fontFamilySelect.value = ann.fontFamily;
   appState.fontFamily    = ann.fontFamily;
+  appState.lastTextStyle.fontFamily = ann.fontFamily;
 });
 
 propFontSize.addEventListener('input', function () {
@@ -361,6 +362,7 @@ propFontSize.addEventListener('input', function () {
   el.style.fontSize = ann.fontSize + 'px';
   ann.w = el.offsetWidth;
   ann.h = el.offsetHeight;
+  appState.lastTextStyle.fontSize = ann.fontSize;
 });
 
 propTextColor.addEventListener('input', function () {
@@ -368,6 +370,7 @@ propTextColor.addEventListener('input', function () {
   var ann = currentSelection.annotation;
   ann.color = propTextColor.value;
   currentSelection.element.style.color = ann.color;
+  appState.lastTextStyle.color = ann.color;
 });
 
 propFontWeight.addEventListener('change', function () {
@@ -375,6 +378,11 @@ propFontWeight.addEventListener('change', function () {
   var ann = currentSelection.annotation;
   ann.fontWeight = propFontWeight.value;
   currentSelection.element.style.fontWeight = ann.fontWeight;
+  appState.lastTextStyle.fontWeight = ann.fontWeight;
+});
+
+propInheritStyle.addEventListener('change', function () {
+  appState.inheritStyle = propInheritStyle.checked;
 });
 
 propImgWidth.addEventListener('input', function () {
