@@ -115,6 +115,7 @@ async function loadFontList() {
   if (!fontFamilySelect.value && fonts.length > 0) {
     fontFamilySelect.value = fonts[0];
     appState.fontFamily = fonts[0];
+    appState.lastTextStyle.fontFamily = fonts[0];
   }
 
   // props パネルのフォントセレクトも同じリストで初期化
@@ -181,6 +182,12 @@ async function loadPDF(file) {
   pagesContainer.innerHTML = '';
   currentSelection = null;
   showPropsPanel('empty');
+  appState.lastTextStyle = {
+    fontFamily: appState.fontFamily,
+    fontSize:   16,
+    color:      '#14130F',
+    fontWeight: '400'
+  };
   dropHint.classList.add('hidden');
   filenameDisp.textContent = file.name;
 
