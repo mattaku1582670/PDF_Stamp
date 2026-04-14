@@ -56,13 +56,16 @@ function imageBuildElement(ann, page, pageIndex, updateSelection) {
   var img  = document.createElement('img');
   img.src  = ann.url;
   img.alt  = '';
+  var needsInitialSize = (ann.aspectRatio === null);
   img.onload = function () {
     if (img.naturalWidth > 0) {
-      var ratio      = img.naturalHeight / img.naturalWidth;
+      var ratio       = img.naturalHeight / img.naturalWidth;
       ann.aspectRatio = ratio;
-      ann.h           = ann.w * ratio;
-      el.style.height = ann.h + 'px';
-      imageSyncProps(ann);
+      if (needsInitialSize) {
+        ann.h           = ann.w * ratio;
+        el.style.height = ann.h + 'px';
+        imageSyncProps(ann);
+      }
     }
   };
 
