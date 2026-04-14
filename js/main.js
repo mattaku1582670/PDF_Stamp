@@ -320,11 +320,12 @@ function deleteSelected() {
 // プロパティパネル — 値反映
 // ============================================================
 function fillTextProps(ann) {
-  propTextContent.value = ann.text       || '';
-  propFontFamily.value  = ann.fontFamily || appState.fontFamily;
-  propFontSize.value    = ann.fontSize   || 16;
-  propTextColor.value   = ann.color      || '#14130F';
-  propFontWeight.value  = ann.fontWeight || '400';
+  propTextContent.value    = ann.text       || '';
+  propFontFamily.value     = ann.fontFamily || appState.fontFamily;
+  propFontSize.value       = ann.fontSize   || 16;
+  propTextColor.value      = ann.color      || '#14130F';
+  propFontWeight.value     = ann.fontWeight || '400';
+  propInheritStyle.checked = appState.inheritStyle;
 }
 
 function fillImageProps(ann) {
