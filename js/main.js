@@ -257,7 +257,7 @@ document.addEventListener('keydown', function (e) {
   var editable = document.activeElement && document.activeElement.contentEditable === 'true';
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || editable) return;
 
-  if (e.ctrlKey && e.key === 'd') {
+  if (e.ctrlKey && e.key.toLowerCase() === 'd') {
     e.preventDefault();
     if (currentSelection) duplicateSelected();
     return;
