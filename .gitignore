@@ -1,0 +1,29 @@
+# Claude Code
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# エディタ
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*~
+
+# フォントファイル（ローカルフォントを誤ってコミットしないよう除外）
+*.ttf
+*.ttc
+*.otf
+*.woff
+*.woff2
+
+# 一時ファイル
+*.log
+*.tmp

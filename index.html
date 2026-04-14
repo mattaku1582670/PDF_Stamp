@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Stamp</title>
+  <link rel="stylesheet" href="./css/style.css">
+
+  <!-- ローカルライブラリ（オフライン対応） -->
+  <script src="./lib/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = './lib/pdf.worker.min.js';
+  </script>
+  <script src="./lib/pdf-lib.min.js"></script>
+</head>
+<body>
+
+  <!-- ===== Header ===== -->
+  <header class="app-header">
+    <div class="header-brand">
+      <span class="brand-name">PDF Stamp</span>
+    </div>
+    <div class="header-filename" id="filename-display">— ファイルを開いてください —</div>
+    <div class="header-actions">
+
+      <!-- フォントファミリー選択 -->
+      <label class="font-family-label" for="font-family-select">フォント</label>
+      <select id="font-family-select" class="font-select" title="テキスト注釈に使用するフォント"></select>
+
+      <div class="header-sep"></div>
+
+      <button class="btn-secondary" id="open-btn">Open</button>
+      <button class="btn-primary" id="save-btn" disabled title="PDFとして保存&#10;※追加したテキストは画像として埋め込まれます（選択・OCR不可）">Save As…</button>
+      <input type="file" id="pdf-input" accept=".pdf" hidden>
+    </div>
+  </header>
+
+  <!-- ===== App body ===== -->
+  <div class="app-body">
+
+    <!-- 左ツールバー -->
+    <nav class="toolbar">
+      <button class="tool-btn active" data-tool="select" title="選択 (V)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87c.45 0 .67-.54.35-.85L6.35 2.85a.5.5 0 0 0-.85.36z"/>
+        </svg>
+      </button>
+      <button class="tool-btn" data-tool="text" title="テキスト (T)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M4 7V4h16v3"/>
+          <path d="M9 20h6"/>
+          <path d="M12 4v16"/>
+        </svg>
+      </button>
+      <button class="tool-btn" data-tool="image" title="画像 (I)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <path d="m21 15-5-5L5 21"/>
+        </svg>
+      </button>
+      <div class="toolbar-divider"></div>
+      <button class="tool-btn tool-btn--danger" id="delete-btn" title="削除 (Del)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18"/>
+          <path d="M8 6V4h8v2"/>
+          <path d="M19 6l-1 14H6L5 6"/>
+        </svg>
+      </button>
+    </nav>
+
+    <!-- 中央キャンバス -->
+    <main class="canvas-area" id="canvas-area">
+      <div class="drop-hint" id="drop-hint">
+        <div class="drop-hint-inner">
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="12" y1="18" x2="12" y2="12"/>
+            <line x1="9" y1="15" x2="15" y2="15"/>
+          </svg>
+          <p>PDFをドラッグ&ドロップ<br>または <button class="btn-link" id="drop-open-btn">ファイルを選択</button></p>
+        </div>
+      </div>
+      <div class="pages-container" id="pages-container"></div>
+    </main>
+
+    <!-- 右プロパティパネル -->
+    <aside class="props-panel">
+      <div class="props-empty" id="props-empty">
+        <h3>ショートカット</h3>
+        <dl class="shortcut-list">
+          <dt>V</dt><dd>選択ツール</dd>
+          <dt>T</dt><dd>テキストツール</dd>
+          <dt>I</dt><dd>画像ツール</dd>
+          <dt>Del / ⌫</dt><dd>選択を削除</dd>
+          <dt>Esc</dt><dd>選択解除</dd>
+          <dt>Shift+ドラッグ</dt><dd>縦横比を保持</dd>
+        </dl>
+        <div class="props-hint">
+          <p>ヘッダーのフォント選択でテキストのフォントを変更できます。PCにインストール済みのフォントが使用できます。</p>
+        </div>
+        <div class="props-notice">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <p>追加したテキストは保存時に<strong>画像として埋め込まれます</strong>。保存後のPDFではテキストの選択・コピー・検索・OCRは機能しません。</p>
+        </div>
+      </div>
+
+      <div class="props-text" id="props-text" hidden>
+        <h3>テキスト</h3>
+        <label class="prop-label">
+          文字列
+          <textarea id="prop-text-content" rows="3" placeholder="テキストを入力…"></textarea>
+        </label>
+        <label class="prop-label">
+          フォント
+          <select id="prop-font-family" class="prop-select"></select>
+        </label>
+        <label class="prop-label">
+          フォントサイズ
+          <div class="input-row">
+            <input type="number" id="prop-font-size" min="6" max="300" value="16">
+            <span class="unit">px</span>
+          </div>
+        </label>
+        <label class="prop-label">
+          文字色
+          <input type="color" id="prop-text-color" value="#14130F">
+        </label>
+        <label class="prop-label">
+          太さ
+          <select id="prop-font-weight">
+            <option value="400">Regular</option>
+            <option value="700">Bold</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="props-image" id="props-image" hidden>
+        <h3>画像</h3>
+        <label class="prop-label">
+          幅
+          <div class="input-row">
+            <input type="number" id="prop-img-width" min="10">
+            <span class="unit">px</span>
+          </div>
+        </label>
+        <label class="prop-label">
+          高さ
+          <div class="input-row">
+            <input type="number" id="prop-img-height" min="10">
+            <span class="unit">px</span>
+          </div>
+        </label>
+        <label class="prop-label checkbox-label">
+          <input type="checkbox" id="prop-aspect-lock" checked>
+          縦横比を固定
+        </label>
+        <label class="prop-label">
+          不透明度
+          <div class="input-row">
+            <input type="range" id="prop-opacity" min="0" max="1" step="0.05" value="1">
+            <span class="unit" id="prop-opacity-val">100%</span>
+          </div>
+        </label>
+      </div>
+    </aside>
+  </div>
+
+  <!-- トースト通知 -->
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <!-- アプリスクリプト（依存順に読み込む） -->
+  <script src="./js/shared.js"></script>
+  <script src="./js/overlay.js"></script>
+  <script src="./js/pdfViewer.js"></script>
+  <script src="./js/tools/textTool.js"></script>
+  <script src="./js/tools/imageTool.js"></script>
+  <script src="./js/exporter.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+</html>
