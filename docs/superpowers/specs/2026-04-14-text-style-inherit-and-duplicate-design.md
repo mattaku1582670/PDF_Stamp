@@ -113,7 +113,7 @@ if (e.ctrlKey && e.key === 'd') {
 
 ### `imageTool.js` の対応
 
-`imageBuildElement()` が現在 `imageTool.js` 内のローカル関数であれば、`duplicateSelected()` から呼べるようグローバル関数として公開する（または `main.js` 側で直接DOM構築する）。
+`imageBuildElement()` はすでに `imageTool.js` でグローバル関数として定義済みのため、`main.js` の `duplicateSelected()` からそのまま呼び出せる。変更不要。
 
 ---
 
@@ -123,7 +123,7 @@ if (e.ctrlKey && e.key === 'd') {
 |---|---|
 | `js/main.js` | `appState` に `lastTextStyle`・`inheritStyle` 追加、`duplicateSelected()` 追加、各イベントハンドラ更新、`keydown` に Ctrl+D 追加 |
 | `js/tools/textTool.js` | `textCreateAnnotation()` で `lastTextStyle` を使用するよう変更 |
-| `js/tools/imageTool.js` | `imageBuildElement()` をグローバル公開（必要な場合） |
+| `js/tools/imageTool.js` | 変更なし（`imageBuildElement()` はすでにグローバル） |
 | `index.html` | チェックボックス・複製ボタン追加 |
 
 ---
