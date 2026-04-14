@@ -2,10 +2,17 @@
 // 全ての依存ファイルは script タグで先に読み込まれている前提
 
 var appState = {
-  pdfBytes:   null,
-  fileName:   '',
-  pages:      [],
-  fontFamily: 'Meiryo'   // 現在の既定フォント（システムフォント名）
+  pdfBytes:      null,
+  fileName:      '',
+  pages:         [],
+  fontFamily:    'Meiryo',
+  inheritStyle:  true,
+  lastTextStyle: {
+    fontFamily: 'Meiryo',
+    fontSize:   16,
+    color:      '#14130F',
+    fontWeight: '400'
+  }
 };
 
 // ============================================================

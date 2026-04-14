@@ -11,6 +11,9 @@ function textHandleClick(e, page, pageIndex, state, updateSelection) {
 
 function textCreateAnnotation(x, y, page, pageIndex, state, updateSelection) {
   var id = genAnnId();
+  var style = (state.inheritStyle && state.lastTextStyle)
+    ? state.lastTextStyle
+    : { fontFamily: state.fontFamily || 'Meiryo', fontSize: 16, color: '#14130F', fontWeight: '400' };
   var ann = {
     id:         id,
     pageIndex:  pageIndex,
@@ -20,10 +23,10 @@ function textCreateAnnotation(x, y, page, pageIndex, state, updateSelection) {
     w:          0,
     h:          0,
     text:       '',
-    fontSize:   16,
-    color:      '#14130F',
-    fontWeight: '400',
-    fontFamily: state.fontFamily || 'Meiryo'
+    fontSize:   style.fontSize,
+    color:      style.color,
+    fontWeight: style.fontWeight,
+    fontFamily: style.fontFamily
   };
 
   page.annotations.push(ann);
