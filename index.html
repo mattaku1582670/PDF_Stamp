@@ -95,6 +95,7 @@
           <dt>I</dt><dd>画像ツール</dd>
           <dt>Del / ⌫</dt><dd>選択を削除</dd>
           <dt>Esc</dt><dd>選択解除</dd>
+          <dt>Ctrl+D</dt><dd>選択を複製</dd>
           <dt>Shift+ドラッグ</dt><dd>縦横比を保持</dd>
         </dl>
         <div class="props-hint">
@@ -107,7 +108,10 @@
       </div>
 
       <div class="props-text" id="props-text" hidden>
-        <h3>テキスト</h3>
+        <div class="props-title-row">
+          <h3>テキスト</h3>
+          <button class="btn-duplicate" id="duplicate-btn-text" title="複製 (Ctrl+D)">複製</button>
+        </div>
         <label class="prop-label">
           文字列
           <textarea id="prop-text-content" rows="3" placeholder="テキストを入力…"></textarea>
@@ -141,7 +145,10 @@
       </div>
 
       <div class="props-image" id="props-image" hidden>
-        <h3>画像</h3>
+        <div class="props-title-row">
+          <h3>画像</h3>
+          <button class="btn-duplicate" id="duplicate-btn-image" title="複製 (Ctrl+D)">複製</button>
+        </div>
         <label class="prop-label">
           幅
           <div class="input-row">

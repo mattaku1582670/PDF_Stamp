@@ -63,6 +63,8 @@ var propAspectLock   = document.getElementById('prop-aspect-lock');
 var propOpacity      = document.getElementById('prop-opacity');
 var propOpacityVal   = document.getElementById('prop-opacity-val');
 var propInheritStyle = document.getElementById('prop-inherit-style');
+var duplicateBtnText  = document.getElementById('duplicate-btn-text');
+var duplicateBtnImage = document.getElementById('duplicate-btn-image');
 
 // ============================================================
 // フォント選択
@@ -247,6 +249,12 @@ document.addEventListener('keydown', function (e) {
   var editable = document.activeElement && document.activeElement.contentEditable === 'true';
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || editable) return;
 
+  if (e.ctrlKey && e.key === 'd') {
+    e.preventDefault();
+    if (currentSelection) duplicateSelected();
+    return;
+  }
+
   var map = { v: 'select', t: 'text', i: 'image' };
   var key = e.key.toLowerCase();
   if (map[key]) {
@@ -265,6 +273,8 @@ document.addEventListener('keydown', function (e) {
 deleteBtn.addEventListener('click', function () {
   if (currentSelection) deleteSelected();
 });
+duplicateBtnText.addEventListener('click',  function () { if (currentSelection) duplicateSelected(); });
+duplicateBtnImage.addEventListener('click', function () { if (currentSelection) duplicateSelected(); });
 
 // ============================================================
 // 選択状態管理
@@ -314,6 +324,34 @@ function deleteSelected() {
   element.remove();
   currentSelection = null;
   showPropsPanel('empty');
+}
+
+function duplicateSelected() {
+  if (!currentSelection) return;
+  var src       = currentSelection.annotation;
+  var pageIndex = currentSelection.pageIndex;
+  var page      = appState.pages[pageIndex];
+
+  var newAnn = Object.assign({}, src, {
+    id: genAnnId(),
+    x:  src.x + 16,
+    y:  src.y + 16
+  });
+
+  if (src.type === 'image') {
+    newAnn.url = URL.createObjectURL(new Blob([src.bytes], { type: src.mimeType }));
+  }
+
+  page.annotations.push(newAnn);
+
+  var el;
+  if (src.type === 'text') {
+    el = textBuildElement(newAnn, page, pageIndex, updateSelection);
+  } else {
+    el = imageBuildElement(newAnn, page, pageIndex, updateSelection);
+  }
+  page.overlayEl.appendChild(el);
+  updateSelection(pageIndex, newAnn);
 }
 
 // ============================================================
