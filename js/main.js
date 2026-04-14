@@ -124,6 +124,7 @@ async function loadFontList() {
 // ヘッダーのフォント変更 → 以降に作成する注釈の既定フォントを更新
 fontFamilySelect.addEventListener('change', function () {
   appState.fontFamily = fontFamilySelect.value;
+  appState.lastTextStyle.fontFamily = fontFamilySelect.value;
   // 選択中のテキスト注釈があれば即時反映
   if (currentSelection && currentSelection.annotation.type === 'text') {
     var ann = currentSelection.annotation;
