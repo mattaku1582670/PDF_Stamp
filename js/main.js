@@ -401,16 +401,64 @@ propFontFamily.addEventListener('change', function () {
   appState.lastTextStyle.fontFamily = ann.fontFamily;
 });
 
-propFontSize.addEventListener('input', function () {
+function clampFontSize(value) {
+  return Math.max(6, Math.min(300, Math.round(value)));
+}
+
+function getCurrentFontSize() {
+  if (isSel('text') && Number.isFinite(currentSelection.annotation.fontSize)) {
+    return clampFontSize(currentSelection.annotation.fontSize);
+  }
+  if (Number.isFinite(appState.lastTextStyle.fontSize)) {
+    return clampFontSize(appState.lastTextStyle.fontSize);
+  }
+  return 16;
+}
+
+function applyFontSize(value) {
   if (!isSel('text')) return;
   var ann = currentSelection.annotation;
-  ann.fontSize = +propFontSize.value;
+  ann.fontSize = clampFontSize(value);
+  propFontSize.value = ann.fontSize;
   var el = currentSelection.element;
   el.style.fontSize = ann.fontSize + 'px';
   ann.w = el.offsetWidth;
   ann.h = el.offsetHeight;
   appState.lastTextStyle.fontSize = ann.fontSize;
+}
+
+function nudgeFontSize(delta) {
+  applyFontSize(getCurrentFontSize() + delta);
+}
+
+propFontSize.addEventListener('input', function () {
+  if (!isSel('text')) return;
+  var raw = Number(propFontSize.value);
+  if (!Number.isFinite(raw) || raw < 6 || raw > 300) return;
+  applyFontSize(raw);
 });
+
+propFontSize.addEventListener('change', function () {
+  if (!isSel('text')) return;
+  var raw = Number(propFontSize.value);
+  applyFontSize(Number.isFinite(raw) ? raw : getCurrentFontSize());
+});
+
+document.getElementById('prop-font-size-dec').addEventListener('click', function (e) {
+  nudgeFontSize(-(e.shiftKey ? 10 : 1));
+});
+
+document.getElementById('prop-font-size-inc').addEventListener('click', function (e) {
+  nudgeFontSize(e.shiftKey ? 10 : 1);
+});
+
+propFontSize.addEventListener('wheel', function (e) {
+  if (document.activeElement !== propFontSize) return;
+  if (e.deltaY === 0) return;
+  e.preventDefault();
+  var step = e.shiftKey ? 10 : 1;
+  nudgeFontSize(e.deltaY < 0 ? step : -step);
+}, { passive: false });
 
 propTextColor.addEventListener('input', function () {
   if (!isSel('text')) return;

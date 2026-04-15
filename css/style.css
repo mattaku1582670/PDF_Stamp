@@ -554,6 +554,25 @@ h3 {
   min-width: 0;
 }
 .input-row input[type="number"]:focus { border-color: var(--fg); }
+.input-row input[type="number"]::-webkit-inner-spin-button,
+.input-row input[type="number"]::-webkit-outer-spin-button { display: none; }
+.input-row input[type="number"] { -moz-appearance: textfield; }
+.stepper-btn {
+  width: 24px;
+  height: 28px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--fg);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--tr);
+  user-select: none;
+}
+.stepper-btn:hover { background: var(--border); }
+.stepper-btn:active { opacity: 0.7; }
 .input-row input[type="range"] {
   flex: 1;
   cursor: pointer;
