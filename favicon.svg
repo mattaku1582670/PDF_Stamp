@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Document body -->
+  <rect x="2" y="1" width="20" height="26" rx="2" fill="#fefce8" stroke="#a16207" stroke-width="1.5"/>
+  <!-- Corner fold -->
+  <path d="M17 1 L22 6 L17 6 Z" fill="#fef08a" stroke="#a16207" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Document lines -->
+  <line x1="6" y1="12" x2="17" y2="12" stroke="#d97706" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+  <line x1="6" y1="16" x2="13" y2="16" stroke="#d97706" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+  <!-- Pencil overlaid at bottom-right -->
+  <g transform="translate(14,14) rotate(-45)">
+    <rect x="-2.5" y="-10" width="5" height="12" rx="1" fill="#f59e0b"/>
+    <polygon points="-2.5,2 2.5,2 0,7" fill="#92400e"/>
+    <line x1="-2.5" y1="1" x2="2.5" y2="1" stroke="#78350f" stroke-width="0.8"/>
+    <rect x="-2.5" y="-11" width="5" height="2.5" rx="0.5" fill="#9ca3af"/>
+  </g>
+  <circle cx="21" cy="26" r="1.2" fill="#f59e0b" opacity="0.7"/>
+</svg>
